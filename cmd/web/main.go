@@ -11,6 +11,8 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/nihalnclt/bookings-go/internal/config"
 	"github.com/nihalnclt/bookings-go/internal/driver"
+	"github.com/nihalnclt/bookings-go/internal/handlers"
+	"github.com/nihalnclt/bookings-go/internal/render"
 )
 
 const portNumber = ":8080"
@@ -30,8 +32,8 @@ func main() {
 	fmt.Println("Starting application on port", portNumber)
 
 	srv := &http.Server{
-		Addr: portNumber,
-		// Handler: ,
+		Addr:    portNumber,
+		Handler: routes(),
 	}
 
 	err = srv.ListenAndServe()
@@ -42,8 +44,8 @@ func run() (*driver.DB, error) {
 	// TODO:
 	// Register models
 
-	inProduction := flag.Bool("production", true, "Application is in production")
-	useCache := flag.Bool("cache", true, "Use template cache")
+	inProduction := flag.Bool("production", false, "Application is in production")
+	useCache := flag.Bool("cache", false, "Use template cache")
 	dbHost := flag.String("dbhost", "localhost", "Database host")
 	dbName := flag.String("dbname", "", "Database name")
 	dbUser := flag.String("dbuser", "", "Database user")
@@ -76,6 +78,8 @@ func run() (*driver.DB, error) {
 	session.Cookie.SameSite = http.SameSiteLaxMode
 	session.Cookie.Secure = app.InProduction
 
+	fmt.Println("session", session)
+
 	app.Session = session
 
 	log.Println("Connecting to database...")
@@ -85,6 +89,10 @@ func run() (*driver.DB, error) {
 		log.Fatal("Connot connect to database! Dying...")
 	}
 	log.Println("Connected to database!")
+
+	repo := handlers.NewRepo(&app, db)
+	handlers.NewHandler(repo)
+	render.NewRenderer(&app)
 
 	return db, nil
 }
