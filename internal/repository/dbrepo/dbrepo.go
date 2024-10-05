@@ -7,13 +7,13 @@ import (
 	"github.com/nihalnclt/bookings-go/internal/repository"
 )
 
-type postgresRep struct {
+type postgresRepo struct {
 	App *config.AppConfig
 	DB  *sql.DB
 }
 
 func NewPostgresRepo(conn *sql.DB, a *config.AppConfig) repository.DatabaseRepo {
-	return &postgresRep{
+	return &postgresRepo{
 		App: a,
 		DB:  conn,
 	}

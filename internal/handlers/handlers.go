@@ -57,8 +57,8 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	// email := r.Form.Get("email")
-	// password := r.Form.Get("password")
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
 
 	form := forms.New(r.PostForm)
 	form.Required("email", "password")
@@ -71,5 +71,14 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	id, _, err := m.DB.Authenticate(email, password)
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "Invalid login credentials")
+		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+		return
+	}
+
+	m.App.Session.Put(r.Context(), "user_id", id)
+	m.App.Session.Put(r.Context(), "flash", "Login successfully")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
