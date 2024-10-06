@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"flag"
 	"fmt"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"github.com/nihalnclt/bookings-go/internal/config"
 	"github.com/nihalnclt/bookings-go/internal/driver"
 	"github.com/nihalnclt/bookings-go/internal/handlers"
+	"github.com/nihalnclt/bookings-go/internal/models"
 	"github.com/nihalnclt/bookings-go/internal/render"
 )
 
@@ -41,8 +43,7 @@ func main() {
 }
 
 func run() (*driver.DB, error) {
-	// TODO:
-	// Register models
+	gob.Register(models.Reservation{})
 
 	inProduction := flag.Bool("production", false, "Application is in production")
 	useCache := flag.Bool("cache", false, "Use template cache")
