@@ -44,6 +44,7 @@ func main() {
 
 func run() (*driver.DB, error) {
 	gob.Register(models.Reservation{})
+	gob.Register(map[string]int{})
 
 	inProduction := flag.Bool("production", false, "Application is in production")
 	useCache := flag.Bool("cache", false, "Use template cache")

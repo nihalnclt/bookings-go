@@ -38,7 +38,12 @@ func routes() http.Handler {
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
 	mux.Route("/admin", func(r chi.Router) {
-		mux.Get("/dashboard", handlers.Repo.AdminDashboard)
+		r.Get("/dashboard", handlers.Repo.AdminDashboard)
+
+		r.Get("/reservations-new", handlers.Repo.AdminNewReservations)
+		r.Get("/reservations-all", handlers.Repo.AdminAllReservations)
+		r.Get("/reservations-calendar", handlers.Repo.AdminReservationsCalendar)
+		r.Post("/reservations-calendar", handlers.Repo.AdminPostReservationsCalendar)
 	})
 
 	return mux
